@@ -1,0 +1,691 @@
+{
+	"info": {
+		"_postman_id": "50cf8715-9f86-40c5-af08-6022c89a208c",
+		"name": "SPRC Web Services",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "DELETE /reset",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "1b9f461a-e9fe-4815-bcee-97bbda6eb896",
+						"exec": [
+							"pm.globals.set(\"BASE_URL\", \"26d00e66.ngrok.io\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/reset",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"reset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /movies",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f81b8ee8-e404-4442-99b6-137dbec38e61",
+						"exec": [
+							"pm.test(\"GET /movies - should do the initial setup and return Status Code 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "9ba88cab-1646-43f5-b5d7-6835b8598c0f",
+						"exec": [
+							"var movies = ['Test Movie 101', 'Test Movie 102', 'Test Movie 103', 'Test Movie 104', 'Test Movie 105'];",
+							"    ",
+							"pm.globals.set(\"EXPECTED_MOVIES\", JSON.stringify(movies));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/movies",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "1.POST /movie",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2a78c3d8-ec7c-4428-953c-a063a57b955d",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "935426f3-5456-4529-a9ea-243462c72f3e",
+						"exec": [
+							"pm.test(\"POST /movie with id 101\", function() {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nume\": \"Test Movie 101\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/movies",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2.POST /movies",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2a78c3d8-ec7c-4428-953c-a063a57b955d",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "935426f3-5456-4529-a9ea-243462c72f3e",
+						"exec": [
+							"pm.test(\"POST /movie with id 102\", function() {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nume\": \"Test Movie 102\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/movies",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3.POST /movies",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2a78c3d8-ec7c-4428-953c-a063a57b955d",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "935426f3-5456-4529-a9ea-243462c72f3e",
+						"exec": [
+							"pm.test(\"POST /movie with id 103\", function() {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nume\": \"Test Movie 103\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/movies",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4.POST /movies",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2a78c3d8-ec7c-4428-953c-a063a57b955d",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "935426f3-5456-4529-a9ea-243462c72f3e",
+						"exec": [
+							"pm.test(\"POST /movie with id 103\", function() {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nume\": \"Test Movie 104\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/movies",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5.POST /movies",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2a78c3d8-ec7c-4428-953c-a063a57b955d",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "935426f3-5456-4529-a9ea-243462c72f3e",
+						"exec": [
+							"pm.test(\"POST /movie with id 105\", function() {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nume\": \"Test Movie 105\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/movies",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /movies",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "556808f0-2bf0-49b9-bd29-65344674fb22",
+						"exec": [
+							"pm.test(\"GET /movies should return expected data\", function() {",
+							"    // Arramge",
+							"    var expected = JSON.parse(pm.globals.get(\"EXPECTED_MOVIES\"));",
+							"    ",
+							"    // Act",
+							"    var actual = pm.response.json();",
+							"    pm.globals.set(\"MOVIES\", JSON.stringify(actual));",
+							"    ",
+							"    // Assert",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(actual.length).to.eql(expected.length);",
+							"    ",
+							"    _.forEach(actual, function(movie) {",
+							"        pm.expect(expected.indexOf(movie.nume)).to.not.eql(-1);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/movies",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /movie/{id}",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7db19ecd-2854-4700-afda-aed45b7999dd",
+						"exec": [
+							"var movies = JSON.parse(pm.globals.get(\"MOVIES\"));",
+							"console.log(movies);",
+							"var movie = movies[_.random(4)];",
+							"",
+							"pm.globals.set(\"SELECTED_MOVIE\", JSON.stringify(movie));",
+							"pm.globals.set(\"ID\", movie.id);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "7913e506-380c-441d-83b0-9a1e96892310",
+						"exec": [
+							"var id = pm.globals.get(\"ID\");",
+							"",
+							"pm.test(`GET /movie/${id} should return Test Movie ${id}`, function(){",
+							"    // Arrange",
+							"    var expected = JSON.parse(pm.globals.get(\"SELECTED_MOVIE\"));",
+							"    ",
+							"    // Act",
+							"    var actual = pm.response.json();",
+							"    ",
+							"    // Assert",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(_.isEqual(expected, actual)).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/movie/{{ID}}",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"movie",
+						"{{ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /movie",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "b3041b42-e9de-4b39-b2ad-a0cea5ff2596",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "063619ff-098a-4b68-bf85-eff6d25ed4fb",
+						"exec": [
+							"var movieId = pm.globals.get(\"ID\");",
+							"",
+							"pm.test(`PUT /movie/${movieId} to modify the movie name`, function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"nume\": \"Test Movie Update\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/movie/{{ID}}",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"movie",
+						"{{ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /movie/{id} After Update",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7db19ecd-2854-4700-afda-aed45b7999dd",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "7913e506-380c-441d-83b0-9a1e96892310",
+						"exec": [
+							"var id = pm.globals.get(\"ID\");",
+							"",
+							"pm.test(`GET /movie/${id} should return Test Movie Update`, function(){",
+							"    // Arrange",
+							"    var expected = \"Test Movie Update\";",
+							"    ",
+							"    // Act",
+							"    var actual = pm.response.json();",
+							"    ",
+							"    // Assert",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(_.isEqual(expected, actual.nume)).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/movie/{{ID}}",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"movie",
+						"{{ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /movie/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ede171b3-a64b-48dc-ad21-3d6f7ff3472a",
+						"exec": [
+							"var movieId = pm.globals.get(\"ID\");",
+							"",
+							"pm.test(`DELETE /movie/${movieId} should get deleted`, function(){",
+							"     pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/movie/{{ID}}",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"movie",
+						"{{ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /movie/{id} After Delete",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7db19ecd-2854-4700-afda-aed45b7999dd",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "7913e506-380c-441d-83b0-9a1e96892310",
+						"exec": [
+							"var id = pm.globals.get(\"ID\");",
+							"",
+							"pm.test(`GET /movie/${id} should return Not Found`, function(){",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/movie/{{ID}}",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"movie",
+						"{{ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /reset",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/reset",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"reset"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
