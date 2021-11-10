@@ -22,22 +22,15 @@ class Database:
 
     # Deletes a movie from the dictionary.
     def delete_movie(self, movie_key):
-        if movie_key not in self.movies:
+        if int(movie_key) not in self.movies:
             raise NotFound("Not found")
 
-        del self.movies[movie_key]
+        del self.movies[int(movie_key)]
 
     # Fetches a movie from the dictionary and creates a copy.
     # of it.
     def get_movie(self, movie_key):
-        movie = self.movies.get(movie_key)
-
-        # TO DO
-        #########################
-        print(movie_key)
-        print(self.movies)
-        print(movie)
-        #########################
+        movie = self.movies.get(int(movie_key))
 
         if movie is None:
             raise NotFound("Not found")
@@ -53,13 +46,13 @@ class Database:
         if movie_name is None:
             raise BadRequest("Bad request")
 
-        movie = self.movies.get(movie_key)
+        movie = self.movies.get(int(movie_key))
 
         if movie is None:
             raise NotFound("Not found")
 
-        movie_ = Movie(movie.id, movie.name)
-        self.movies[movie_key] = movie_
+        movie_ = Movie(movie.id, payload["nume"])
+        self.movies[int(movie_key)] = movie_
 
 
 
@@ -69,7 +62,7 @@ class Database:
 
         for movie_key, movie in self.movies.items():
             movie_ = Movie(movie.id, movie.name)
-            movies.append((movie_key, movie_.toJSON()))
+            movies.append(movie_)
 
         return movies
 

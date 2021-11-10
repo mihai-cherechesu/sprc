@@ -2,6 +2,7 @@ from flask import Flask, request, Response, json
 from werkzeug.exceptions import BadRequest, NotFound
 
 from db import Database
+from models import MovieEncoder
 
 app = Flask(__name__)
 
@@ -19,7 +20,7 @@ def add_movie():
     return Response(status=201)
 
 @app.route("/movie/<id>", methods=["PUT"])
-def update_movie():
+def update_movie(id):
     try:
         db.update_movie(id, request.get_json())
     except BadRequest:
@@ -27,7 +28,7 @@ def update_movie():
     except NotFound:
         return Response(status=404)
     
-    return Response(status=201)
+    return Response(status=200)
 
 @app.route("/movie/<id>", methods=["GET"])
 def get_movie(id):
@@ -36,7 +37,7 @@ def get_movie(id):
     except NotFound:
         return Response(status=404)
     
-    return Response(movie.toJSON(), status=201, mimetype='application/json')
+    return Response(json.dumps(movie), status=200, mimetype='application/json')
 
 @app.route("/movie/<id>", methods=["DELETE"])
 def delete_movie(id):
@@ -57,5 +58,7 @@ def flush_db():
 if __name__ == "__main__":
     db = Database()
 
-    port = app.config.get("PORT", 5000)
+    port = app.config.get("PORT", 5001)
+
+    app.json_encoder = MovieEncoder
     app.run(host="0.0.0.0", port=port, debug=True)
