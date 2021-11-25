@@ -1,7 +1,187 @@
 #include "api.hpp"
 
+map<string, op_type> op_stoi = {
+	{ "login", 			(op_type) LOGIN },
+	{ "logout", 		(op_type) LOGOUT },
+	{ "load", 			(op_type) LOAD },
+	{ "store", 			(op_type) STORE },
+	{ "add", 			(op_type) ADD },
+	{ "del", 			(op_type) DEL },
+	{ "update", 		(op_type) UPDATE },
+	{ "read", 			(op_type) READ },
+	{ "get_stat", 		(op_type) GET_STAT },
+	{ "get_stat_all", 	(op_type) GET_STAT_ALL }
+};
+
 void
-api_prog_1(char *host)
+handle_login(string username)
+{
+	cout << "Executing login " << username << "...\n";
+	return;
+}
+
+void
+handle_logout()
+{
+	printf("Executing logout...\n");
+	return;	
+}
+
+void
+handle_load()
+{
+	printf("Executing load...\n");
+	return;
+}
+
+void
+handle_store()
+{
+	printf("Executing store...\n");
+	return;	
+}
+
+void
+handle_add(int sensor_id, int data_len, float *data)
+{
+	printf("Executing add %d %d [vals]...\n", sensor_id, data_len);
+	return;	
+}
+
+void
+handle_del(int sensor_id)
+{
+	printf("Executing del %d...\n", sensor_id);
+	return;	
+}
+
+void
+handle_update(int sensor_id, int data_len, float *data)
+{
+	printf("Executing update %d %d [vals]...\n", sensor_id, data_len);
+	return;	
+}
+
+void
+handle_read(int sensor_id)
+{
+	printf("Executing read %d...\n", sensor_id);
+	return;
+}
+
+void
+handle_get_stat(int sensor_id)
+{
+	printf("Executing get_stat %d...\n", sensor_id);
+	return;
+}
+
+void
+handle_get_stat_all()
+{
+	printf("Executing get_stat_all...\n");
+	return;
+}
+
+void
+execute_input(string input_file)
+{
+	ifstream in(input_file);
+	string line, token;
+
+	if (!in) {
+		cout << "[FATAL]: Unable to open input file " << input_file << "!\n";
+		exit(1);
+	}
+
+	while (getline(in, line)) {
+		stringstream ss(line);
+		vector<string> tokens;
+
+		while (getline(ss, token, ' ')) {
+			tokens.push_back(token);
+		}
+
+		switch(op_stoi[tokens[TKN_CMD]]) {
+			case LOGIN: {
+				string username = tokens[TKN_USERNAME];
+				handle_login(username);
+				break;
+			}
+
+			case LOGOUT: {	
+				handle_logout();
+				break;
+			}
+			
+			case LOAD: {
+				handle_load();
+				break;
+			}
+
+			case STORE: {
+				handle_store();
+				break;
+			}
+
+			case ADD: {
+				int sensor_id = stoi(tokens[TKN_SID]);
+				int data_len = stoi(tokens[TKN_SDATA_LEN]);
+				float *data = (float *) calloc(data_len, sizeof(float));
+
+				for (int i = 0; i < data_len; i++) {
+					data[i] = stof(tokens[TKN_SDATA_VAL + i]);
+				}
+
+				handle_add(sensor_id, data_len, data);
+				break;
+			}
+
+			case DEL: {
+				int sensor_id = stoi(tokens[TKN_SID]);
+				handle_del(sensor_id);
+				break;
+			}
+
+			case UPDATE: {
+				int sensor_id = stoi(tokens[TKN_SID]);
+				int data_len = stoi(tokens[TKN_SDATA_LEN]);
+				float *data = (float *) calloc(data_len, sizeof(float));
+
+				for (int i = 0; i < data_len; i++) {
+					data[i] = stof(tokens[TKN_SDATA_VAL + i]);
+				}
+
+				handle_update(sensor_id, data_len, data);
+				break;
+			}
+
+			case READ: {
+				int sensor_id = stoi(tokens[TKN_SID]);
+				handle_read(sensor_id);
+				break;
+			}
+
+			case GET_STAT: {
+				int sensor_id = stoi(tokens[TKN_SID]);
+				handle_get_stat(sensor_id);
+				break;
+			}
+
+			case GET_STAT_ALL: {
+				handle_get_stat_all();
+				break;
+			}
+			default: 
+				cout << "[ERROR]: Cannot execute command " << tokens[TKN_CMD] << "!\n";
+    	}
+	}
+	
+	in.close();
+}
+
+void
+api_prog_1(char *host, char *input_file)
 {
 	CLIENT *clnt;
 	unsigned long session_key = 0UL;
@@ -12,6 +192,9 @@ api_prog_1(char *host)
 		clnt_pcreateerror (host);
 		exit (1);
 	}
+
+	execute_input(string(input_file));
+	exit(0);
 
 	rpc_msg_ *result_1;
 	rpc_msg_  login_1_arg = {
@@ -426,12 +609,15 @@ int
 main (int argc, char *argv[])
 {
 	char *host;
+	char *input_file;
 
-	if (argc < 2) {
-		printf ("usage: %s server_host\n", argv[0]);
+	if (argc < 3) {
+		printf ("usage: %s server_host input_file\n", argv[0]);
 		exit (1);
 	}
 
 	host = argv[1];
-	api_prog_1 (host);
+	input_file = argv[2];
+
+	api_prog_1 (host, input_file);
 }
