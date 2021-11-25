@@ -93,6 +93,7 @@ logout_client(unsigned long key, char *username)
 {
 	session_to_username.erase(key);
 	username_to_session.erase(username);
+	in_mem_db.erase(key);
 }
 
 float
@@ -168,7 +169,7 @@ login_1_svc(rpc_msg_ *argp, struct svc_req *rqstp)
 rpc_msg_ *
 logout_1_svc(rpc_msg_ *argp, struct svc_req *rqstp)
 {
-	static rpc_msg_  result;
+	static rpc_msg_ result;
 
 	unsigned long session_key = argp->rpc_msg__u.success
 		.rpc_success_u.req.session_key;
