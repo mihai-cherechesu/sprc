@@ -1,0 +1,222 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "P5697886F9CA74929"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 5,
+              "gradientMode": "opacity",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "smooth",
+              "lineStyle": {
+                "fill": "solid"
+              },
+              "lineWidth": 2,
+              "pointSize": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": true,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byType",
+                "options": "number"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "${__field.name}.${__field.labels.station}"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 12,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 2,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "single"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "P5697886F9CA74929"
+            },
+            "query": "from(bucket: \"b0\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"data\" and r[\"location\"] == \"UPB\")\r\n  |> aggregateWindow(every: 1s, fn: mean)\r\n  |> fill(usePrevious: true)",
+            "refId": "A"
+          }
+        ],
+        "title": "Data Graph",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "P5697886F9CA74929"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byType",
+                "options": "number"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "${__field.name}.${__field.labels.station}"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 24,
+          "x": 0,
+          "y": 12
+        },
+        "id": 4,
+        "maxDataPoints": 21600,
+        "options": {
+          "footer": {
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "frameIndex": 2,
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "8.3.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "P5697886F9CA74929"
+            },
+            "query": " from(bucket: \"b0\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"data\" and r[\"location\"] == \"UPB\")\r\n  |> aggregateWindow(every: 1m, fn: mean)\r\n  |> group(columns: [\"_time\", \"station\"])\r\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> group(columns: [\"station\"])",
+            "refId": "A"
+          }
+        ],
+        "title": "Tabel",
+        "transformations": [
+          {
+            "id": "seriesToColumns",
+            "options": {}
+          }
+        ],
+        "type": "table"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 34,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "UPB IoT Data",
+    "uid": "_whCSnx7z",
+    "version": 1,
+    "weekStart": ""
+  }

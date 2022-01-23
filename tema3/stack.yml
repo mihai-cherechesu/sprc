@@ -1,0 +1,91 @@
+version: "3.9"
+
+services:
+
+  # Comment ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  broker:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./broker/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./broker/log/mosquitto.log:/mosquitto/log/mosquitto.log
+      - mosquitto-data:/mosquitto/data/
+    networks:
+      - broker-adapter-net
+
+  # Comment ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  adapter:
+    image: 127.0.0.1:5000/iot-adapter:1
+    environment:
+      - DEBUG_DATA_FLOW=true
+      - INFLUX_ORG=upb
+      - INFLUX_BUCKET=b0
+      - INFLUX_TOKEN_FILE=/run/secrets/influx_init_token
+    secrets:
+      - influx_init_token
+    volumes:
+      - ./adapter/src:/adapter/src
+    networks:
+      - broker-adapter-net
+      - influx-adapter-net
+
+  # Comment ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  influx:
+    image: 127.0.0.1:5000/iot-influx:1
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=init
+      - DOCKER_INFLUXDB_INIT_PASSWORD_FILE=/run/secrets/influx_init_pass
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN_FILE=/run/secrets/influx_init_token
+      - DOCKER_INFLUXDB_INIT_ORG=upb
+      - DOCKER_INFLUXDB_INIT_BUCKET=b0
+      - DOCKER_INFLUXDB_INIT_RETENTION=260w
+    secrets:
+      - influx_init_pass
+      - influx_init_token
+    volumes:
+      - influx-data:/var/lib/influxdb2
+    networks:
+      - influx-grafana-net
+      - influx-adapter-net
+
+  # Comment ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  grafana:
+    image: 127.0.0.1:5000/iot-grafana:1
+    ports:
+      - "80:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=root
+      - GF_SECURITY_ADMIN_PASSWORD_FILE=/run/secrets/grafana_root_pass
+      - INFLUX_ORG=upb
+      - INFLUX_BUCKET=b0
+      - INFLUX_TOKEN_FILE=/run/secrets/influx_init_token
+    secrets:
+      - grafana_root_pass
+      - influx_init_token
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - influx-grafana-net
+
+# Comment ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+secrets:
+  influx_init_pass:
+    external: true
+  influx_init_token:
+    external: true
+  grafana_root_pass:
+    external: true
+
+# Comment ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+volumes:
+  influx-data:
+  grafana-data:
+  mosquitto-data:
+
+# Comment ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+networks:
+  influx-grafana-net:
+  influx-adapter-net:
+  broker-adapter-net:

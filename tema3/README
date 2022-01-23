@@ -1,0 +1,128 @@
+Name: Mihai-Cristian Cherechesu
+Grupa: 344 C3
+
+Tema 3 - SPRC
+-------------------------------------------------------------------------------
+
+
+CONTENTS OF THIS FILE
+---------------------
+ * Pornire/oprire stack
+ * Implementare
+ * Probleme cunoscute
+ * Feedback
+
+PORNIRE/OPRIRE STACK
+--------------------
+
+Pentru a porni stack-ul, se ruleaza script-ul "deploy.sh".
+
+  ~~~~~~~~~~
+  ~~ NOTE ~~      RULAREA "deploy.sh" va afisa la STDOUT PAROLA
+  ~~~~~~~~~~      GENERATA CARE VA TREBUI FOLOSITA LA LOGAREA IN GRAFANA.
+
+
+Pentru a opri stack-ul, se ruleaza script-ul "clean.sh".
+
+Daca se doreste eliminarea de named volumes, se mai ruleaza inca o data script-ul
+anterior cu parametrul "volumes".
+
+
+IMPLEMENTARE
+------------
+
+  Pentru a fi un README cat mai concis, voi atinge doar punctele importante din
+  implementare, asa ca voi imparti aceasta sectiune in 3 subsectiuni:
+
+    (1) Docker images, stack.yml & security enhancements
+    (2) Analiza codului sursa din Adaptor
+    (3) Configurarea Grafana via Flux
+
+    ------------
+    (1) Imaginile de Docker au ca baza doar imagini din upstream, oficiale. S-a
+    folosit pentru toate versiunea latest, insa in interiorul "stack.yml" s-au
+    folosit tag-urile de versiune stable majora (:2, :1), care, in fapt, coincid cu
+    tag-urile latest si cu cel al ultimului update adus prin minor. Aceasta alegere
+    a fost facuta pentru a ne asigura ca aplicatia va rula, indiferent de imaginile
+    trase din upstream.
+
+    Toate imaginile de Docker sunt construite si puse intr-un registry privat,
+    care ruleaza pe portul 5000. Acest registry privat este si el lansat tot sub
+    forma unui container.
+
+    In Dockerfile-uri se face override la entrypoint-urile din imaginile parinte,
+    pentru a putea face un workaround despre care vom discuta la partea de
+    security enhancements.
+
+    In fisierul stack.yml sunt toate serviciile care se ruleaza pe baza imaginilor
+    stocate in registrul privat. Un detaliu important aici este folosirea secretelor,
+    pentru a nu stoca in clar informatii senzitive.
+
+    Pentru a oferi o solutie securizata si pentru a nu stoca parole hardcodate in
+    fisiere de configurare sau fisiere text, am folosit secretele din swarm. Injectarea
+    secretelor in variabilele de mediu care sunt folosite la "build time" (tot runtime,
+    doar ca se intampla Docker-side) s-a realizat printr-un workaround, folosit si in
+    imaginile din upstream de la MySQL, Wordpress. Secretele sunt montate in container si
+    se citesc in entrypoint, deci entrypoint-ul joaca doar un joc de wrapper peste cel
+    din upstream. Din acest motiv sunt aduse pentru majoritatea imaginilor si
+    entrypoint-urile din upstream in acealasi director, cu versiunile lor exacte.
+
+    Parolele/token-ul care se injecteaza in secrete sunt generate aleatoriu cu openssl.
+
+    ------------
+    (2) Adaptorul se ocupa cu partea de ingestie si partea de logging. Logging-ul
+    se poate activa doar din stack.yml prin variabila de mediu DEBUG_DATA_FLOW,
+    care default e true. In interiorul adaptorului, se verifica in functia de
+    configurare la intrarea in "main" daca variabila are valoarea false, iar in acest
+    caz va dezactiva logger-ul, fara a fi nevoie de multe conditii de verificare
+    in tot codul.
+
+    Un alt detaliu de implementare este health check-ul care se face pentru fiecare
+    serviciu in parte, pana a putea incepe subscribe-ul si ingestia. Adaptorul intercepteaza
+    si SIGTERM in cazul in care se doreste inchiderea container-ului si repornirea unui
+    nou container, cu un cod updatat (modificat direct din bind mount).
+
+    ------------
+    (3) Grafana a fost configurata cu datasource-ul de Influx, versiunea latest,
+    OSS 2.1, si pe post de query language s-a folosit Flux.
+
+    Pentru autentificarea cu datasource-ul ales, s-a folosit token-ul de la serviciul
+    de influx, care e montat si in acest container tot printr-un secret.
+
+    Pentru logarea pe Grafana, se va folosi parola pe care o va afisa script-ul de bootstrap
+    (deploy.sh)
+
+    Pentru a schimba numele field-urilor din dashboard-ul UPB IoT Data, s-a folosit
+    o regula de override pe field-urile cu valoare numerica, iar numele lor este dat
+    generic:
+
+            ${__field.name}.${__field.labels.station}
+
+
+PROBLEME CUNOSCUTE
+------------------
+
+    (1) Pentru fiecare dintre grafice, s-au folosit politicile de agregare corecte,
+    insa, cel mai probabil din cauza limitarilor hardware. Desenarea unui numar atat de mare
+    de data points implica initial un fetch din baza de date si asteptarea executiei engine-ului
+    de influx a query-ului cerut. Timeout-ul pe care il suporta dataproxy-ul din Grafana
+    este de 30s default, iar schimbarea lui nu a imbunatatit situatia. Pe intervale mici
+    de timp (10h, 6h) aceasta agregare functioneaza.
+
+    La incarcarea bateriilor am renuntat la fill(previous), pentru a reduce
+    numarul de puncte de date desenate.
+
+    Intervalele de maximum data points sunt stabilite exact cat sa poata fi facuta
+    orice agragare la timp de 1 secunda, insa timeout-ul pentru fetch-ul din tsdb este
+    atins.
+
+
+FEEDBACK
+--------
+
+    Pros:
+    (1) Tema foarte interesanta si practica, gj!
+    (2) -
+
+    Cons:
+    (1) -

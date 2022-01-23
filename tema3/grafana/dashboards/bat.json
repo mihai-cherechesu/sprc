@@ -1,0 +1,295 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "P5697886F9CA74929"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisLabel": "",
+              "axisPlacement": "left",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 27,
+              "gradientMode": "opacity",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "stepBefore",
+              "lineStyle": {
+                "fill": "solid"
+              },
+              "lineWidth": 2,
+              "pointSize": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "always",
+              "spanNulls": true,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "line"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "watt"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 12,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 2,
+        "maxDataPoints": 172800,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "table",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "single"
+          }
+        },
+        "pluginVersion": "8.3.4",
+        "targets": [
+          {
+            "alias": "RPi_1",
+            "datasource": {
+              "type": "influxdb",
+              "uid": "P5697886F9CA74929"
+            },
+            "groupBy": [
+              {
+                "params": [
+                  "1s"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "previous"
+                ],
+                "type": "fill"
+              }
+            ],
+            "measurement": "data",
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "from(bucket: \"b0\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"data\" and r[\"_field\"] == \"BAT\")\r\n  |> group(columns: [\"station\"])\r\n  |> aggregateWindow(every: 2s, fn: mean)",
+            "rawQuery": true,
+            "refId": "A",
+            "resultFormat": "time_series",
+            "select": [
+              [
+                {
+                  "params": [
+                    "BAT"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": [
+              {
+                "key": "station",
+                "operator": "=",
+                "value": "RPi_1"
+              }
+            ]
+          }
+        ],
+        "title": "Evolutia Incarcarii Bateriilor",
+        "transparent": true,
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "P5697886F9CA74929"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "left",
+              "displayMode": "auto",
+              "filterable": false
+            },
+            "decimals": 2,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 6,
+          "w": 24,
+          "x": 0,
+          "y": 12
+        },
+        "id": 4,
+        "options": {
+          "footer": {
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "frameIndex": 1,
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "8.3.4",
+        "targets": [
+          {
+            "alias": "Metric",
+            "datasource": {
+              "type": "influxdb",
+              "uid": "P5697886F9CA74929"
+            },
+            "groupBy": [
+              {
+                "params": [
+                  "$__interval"
+                ],
+                "type": "time"
+              },
+              {
+                "params": [
+                  "null"
+                ],
+                "type": "fill"
+              }
+            ],
+            "hide": false,
+            "orderByTime": "ASC",
+            "policy": "default",
+            "query": "import \"influxdata/influxdb/v1\"\r\n\r\nv1.tagValues(\r\n  bucket: \"b0\",\r\n  tag: \"station\",\r\n  predicate: (r) => true\r\n)",
+            "rawQuery": true,
+            "refId": "STATIONS",
+            "resultFormat": "table",
+            "select": [
+              [
+                {
+                  "params": [
+                    "value"
+                  ],
+                  "type": "field"
+                },
+                {
+                  "params": [],
+                  "type": "mean"
+                }
+              ]
+            ],
+            "tags": []
+          },
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "P5697886F9CA74929"
+            },
+            "hide": false,
+            "query": "data = from(bucket: \"b0\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"data\" and r[\"_field\"] == \"BAT\")\r\n  |> group(columns: [\"station\"])\r\n\r\nlast_by_station = data\r\n  |> last()\r\n  |> set(key: \"_field\", value: \"last_by_station\") \r\n\r\nmean_by_station = data\r\n  |> mean()\r\n  |> set(key: \"_field\", value: \"mean_by_station\") \r\n\r\nmax_by_station = data\r\n  |> max()\r\n  |> set(key: \"_field\", value: \"max_by_station\") \r\n\r\nmin_by_station = data\r\n  |> min()\r\n  |> set(key: \"_field\", value: \"min_by_station\") \r\n\r\nunion(tables: [last_by_station, min_by_station, max_by_station, mean_by_station]) \r\n  |> pivot(rowKey: [\"_start\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> keep(columns: [\"last_by_station\", \"min_by_station\", \"max_by_station\", \"mean_by_station\"])",
+            "refId": "METRICS"
+          }
+        ],
+        "title": "Statistic Aggregation",
+        "transformations": [],
+        "type": "table"
+      }
+    ],
+    "refresh": "30m",
+    "schemaVersion": 34,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-48h",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ]
+    },
+    "timezone": "",
+    "title": "Battery Dashboard",
+    "uid": "bPYi1Gb7z",
+    "version": 1,
+    "weekStart": ""
+  }
